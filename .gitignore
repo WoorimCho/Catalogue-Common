@@ -1,0 +1,19 @@
+# Markdown: ignore all .md except the docs we maintain by hand
+*.md
+!README.md
+!CHANGES.md
+!SECURITY.md
+
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea
+*.iml
+*.iws
+*.ipr
+out/
+
+### VS Code ###
+.vscode/
