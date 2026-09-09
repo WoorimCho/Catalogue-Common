@@ -33,6 +33,8 @@ dependencies {
     api("jakarta.validation:jakarta.validation-api")          // constraints on the request records
     api("io.zipkin.reporter2:zipkin-reporter")                // BytesMessageSender
     api("io.zipkin.reporter2:zipkin-sender-urlconnection")    // URLConnectionSender
+    // Servlet API for InternalAuthFilter — provided at runtime by each catalogue's web starter.
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
