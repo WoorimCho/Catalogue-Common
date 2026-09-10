@@ -9,7 +9,13 @@ import java.util.Set;
 
 public interface TagService {
 
-    Page<TagResponse> list(String prefix, String namespace, Pageable pageable);
+    /**
+     * Search tags. {@code nameContains} matches anywhere in the name
+     * (case-insensitive substring) — so "vegan" also finds "diet:vegan". When
+     * blank, {@code namespace} filters by namespace; when both are blank, every
+     * tag is listed. {@code nameContains} wins if both are given.
+     */
+    Page<TagResponse> list(String nameContains, String namespace, Pageable pageable);
 
     TagResponse get(long id);
 

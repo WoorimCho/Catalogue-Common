@@ -12,7 +12,7 @@ in one place instead of copy-pasted twice.
 | Package | Classes |
 |---|---|
 | `com.example.cataloguecommon` | `PageResponse<T>` (stable page envelope), `ApiExceptionHandler` (RFC-9457 `ProblemDetail`), `NotFoundException`, `Csv` (small RFC-4180-ish reader), `TracingSenderConfig` (the URLConnection Zipkin sender) |
-| `com.example.cataloguecommon.tag` | `Tag` (`@Entity`), `TagRepository`, `TagService` + `TagServiceImpl` (search / CRUD / merge / name-resolution), `TagOwnerCleanup` (SPI — see below), `TagRequest` / `TagResponse` / `TagNamesRequest` / `MergeRequest` |
+| `com.example.cataloguecommon.tag` | `Tag` (`@Entity`), `TagRepository`, `TagService` + `TagServiceImpl` (search / CRUD / merge / name-resolution — `list(nameContains, …)` is a case-insensitive **substring** match), `TagOwnerCleanup` (SPI — see below), `TagRequest` / `TagResponse` / `TagNamesRequest` / `MergeRequest` |
 
 ### The one per-service bit: `TagOwnerCleanup`
 

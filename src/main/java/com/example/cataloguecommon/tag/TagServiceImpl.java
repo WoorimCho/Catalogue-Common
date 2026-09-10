@@ -34,10 +34,10 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TagResponse> list(String prefix, String namespace, Pageable pageable) {
+    public Page<TagResponse> list(String nameContains, String namespace, Pageable pageable) {
         Page<Tag> page;
-        if (StringUtils.hasText(prefix)) {
-            page = tagRepository.findByNameStartingWithIgnoreCase(prefix.trim(), pageable);
+        if (StringUtils.hasText(nameContains)) {
+            page = tagRepository.findByNameContainingIgnoreCase(nameContains.trim(), pageable);
         } else if (StringUtils.hasText(namespace)) {
             page = tagRepository.findByNamespaceIgnoreCase(namespace.trim(), pageable);
         } else {

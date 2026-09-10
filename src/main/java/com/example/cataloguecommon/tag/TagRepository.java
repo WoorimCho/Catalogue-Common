@@ -14,8 +14,8 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     List<Tag> findByNameIn(Collection<String> names);
 
-    /** Autocomplete: tags whose name starts with the given prefix. */
-    Page<Tag> findByNameStartingWithIgnoreCase(String prefix, Pageable pageable);
+    /** Search / autocomplete: tags whose name contains the fragment anywhere (case-insensitive). */
+    Page<Tag> findByNameContainingIgnoreCase(String fragment, Pageable pageable);
 
     Page<Tag> findByNamespaceIgnoreCase(String namespace, Pageable pageable);
 }
