@@ -101,6 +101,12 @@ public class TagServiceImpl implements TagService {
         if (normalised.isEmpty()) {
             return Set.of();
         }
+        if (normalised.size() > MAX_TAGS_PER_REQUEST) {
+            throw new IllegalArgumentException("at most " + MAX_TAGS_PER_REQUEST + " tags per request");
+        }
+        if (normalised.stream().anyMatch(name -> name.length() > MAX_TAG_LENGTH)) {
+            throw new IllegalArgumentException("a tag name is at most " + MAX_TAG_LENGTH + " characters");
+        }
 
         Map<String, Tag> byName = tagRepository.findByNameIn(normalised).stream()
                 .collect(Collectors.toMap(Tag::getName, Function.identity()));

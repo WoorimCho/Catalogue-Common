@@ -10,6 +10,16 @@ import java.util.Set;
 public interface TagService {
 
     /**
+     * Most tags a single request may carry (SECURITY.md N4). {@link #resolve}
+     * enforces it for every caller — the JSON API, the CSV importers and the
+     * attach-tags endpoint — so the DTO annotations are only the friendly 400.
+     */
+    int MAX_TAGS_PER_REQUEST = 50;
+
+    /** Longest tag name; matches {@code tag.name varchar(100)}. */
+    int MAX_TAG_LENGTH = 100;
+
+    /**
      * Search tags. {@code nameContains} matches anywhere in the name
      * (case-insensitive substring) — so "vegan" also finds "diet:vegan". When
      * blank, {@code namespace} filters by namespace; when both are blank, every

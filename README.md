@@ -14,6 +14,20 @@ in one place instead of copy-pasted twice.
 | `com.example.cataloguecommon` | `PageResponse<T>` (stable page envelope), `ApiExceptionHandler` (RFC-9457 `ProblemDetail`), `NotFoundException`, `Csv` (small RFC-4180-ish reader), `TracingSenderConfig` (the URLConnection Zipkin sender) |
 | `com.example.cataloguecommon.tag` | `Tag` (`@Entity`), `TagRepository`, `TagService` + `TagServiceImpl` (search / CRUD / merge / name-resolution — `list(nameContains, …)` is a case-insensitive **substring** match), `TagOwnerCleanup` (SPI — see below), `TagRequest` / `TagResponse` / `TagNamesRequest` / `MergeRequest` |
 
+### Limits it enforces (finding N4)
+
+Both catalogues inherit these, so a CSV import can't bypass what the JSON API
+enforces:
+
+- `TagService.resolve` refuses more than **50 tags** per request
+  (`MAX_TAGS_PER_REQUEST`) or a name over **100 chars** (`MAX_TAG_LENGTH`,
+  `tag.name varchar(100)`); `TagNamesRequest` / `MergeRequest` carry matching
+  `@Size` annotations so the HTTP answer is a clean 400 naming the field.
+- `Csv.parse` refuses a file with more than **5 000 data rows** (`MAX_ROWS`) or a
+  row with more than **100 fields** (`MAX_FIELDS_PER_ROW`) — the 5 MB upload cap
+  alone would allow ~1 M tiny rows. It fails fast, so a run of millions of commas
+  never builds millions of fields.
+
 ### The one per-service bit: `TagOwnerCleanup`
 
 Deleting or merging a tag has to first clear it off every entry that carries it —
@@ -50,7 +64,8 @@ shared entity just maps to whichever one is in scope.
 ## Build
 
 ```bash
-./gradlew build      # compile + the small unit tests (Csv parsing, tag normalisation)
+./gradlew build      # compile + the small unit tests (Csv parsing + limits, tag
+                     # normalisation + limits, internal-auth signing)
 ```
 
 It's driven automatically by each catalogue's build (and Dockerfile — those set
