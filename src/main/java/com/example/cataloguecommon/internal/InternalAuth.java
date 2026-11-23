@@ -24,6 +24,8 @@ public final class InternalAuth {
     public static final long MAX_SKEW_MS = 5 * 60 * 1000;
     /** {@code u} value when the caller isn't acting for a specific user (register, crawler, …). */
     public static final String NO_USER = "-";
+    /** {@code openssl rand -hex 24} (48 characters) clears this with room to spare. */
+    public static final int MIN_SECRET_LENGTH = 32;
 
     private InternalAuth() {
     }
@@ -77,6 +79,24 @@ public final class InternalAuth {
             throw new InvalidInternalAuthException("signature mismatch");
         }
         return NO_USER.equals(u) ? null : Long.parseLong(u);
+    }
+
+    /**
+     * Startup check for the shared secret. There is deliberately no default: a
+     * published one would make every header forgeable (SECURITY.md N1), so a
+     * missing or short value stops the service instead of falling back.
+     */
+    public static String requireSecret(String secret) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("internal-auth.secret is not set - export INTERNAL_AUTH_SECRET "
+                    + "(or add it to .env) as a random value of at least " + MIN_SECRET_LENGTH
+                    + " characters, e.g. `openssl rand -hex 24`");
+        }
+        if (secret.length() < MIN_SECRET_LENGTH) {
+            throw new IllegalStateException("internal-auth.secret is too short (" + secret.length()
+                    + " characters, need at least " + MIN_SECRET_LENGTH + ") - use `openssl rand -hex 24`");
+        }
+        return secret;
     }
 
     private static String canonical(String method, String path, String u, long t) {
